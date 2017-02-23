@@ -6,7 +6,8 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.1'
-
+        // 生成代码工具
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -20,4 +21,33 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+ext {
+    minSdkVersion = 14
+    compileSdkVersion = 24
+    targetSdkVersion = compileSdkVersion
+    buildToolsVersion = '24.0.2'
+
+    dependencies = [
+
+            SupportV7 : 'com.android.support:appcompat-v7:24.2.1',
+            // Dagger2依赖
+            Dagger2 : 'com.google.dagger:dagger:2.6',
+            // 使用apt插件为Dagger2生成代码
+            DaggerCompiler : 'com.google.dagger:dagger-compiler:2.6',
+            // Butterknife依赖
+            Butterknife : 'com.jakewharton:butterknife:5.1.1',
+            // 添加Retrofit依赖
+            Retrofit : 'com.squareup.retrofit2:retrofit:2.1.0',
+            // 使用Gson进行数据解析
+            Gson : 'com.google.code.gson:gson:2.2.4',
+            // 将Retorfit与Gson关联
+            RetorfitConvertGson : 'com.squareup.retrofit2:converter-gson:2.1.0',
+            // 添加OrmLite依赖
+            OrmLite : 'com.j256.ormlite:ormlite-android:5.0',
+            // RecyclerView引入
+            RecyclerView : 'com.android.support:recyclerview-v7:24.2.1'
+    ]
+
 }
