@@ -2,6 +2,7 @@ package com.it520.takeout;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Handler;
 
 
 /* 
@@ -19,6 +20,8 @@ import android.content.Context;
 public class MyApplication extends Application {
 
     private  static Context sContext;
+    private  static Handler sHandler;
+    private  static int sMainThreadId;
 
     public static Context getContext(){
         return sContext;
@@ -28,5 +31,16 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         sContext = this;
+        sMainThreadId = android.os.Process.myTid();
+        sHandler = new Handler(getMainLooper());
+    }
+
+    public static Handler getMainThreadHandler() {
+        return sHandler;
+    }
+
+
+    public static int getMainThreadId() {
+        return sMainThreadId;
     }
 }

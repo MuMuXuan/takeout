@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Takeout</string>
+
+    <string-array name="main_tabs">
+        <item>首页</item>
+        <item>订单</item>
+        <item>个人</item>
+        <item>更多</item>
+    </string-array>
 </resources>

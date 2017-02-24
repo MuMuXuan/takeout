@@ -45,4 +45,6 @@ dependencies {
     compile rootProject.ext.dependencies.OrmLite
     // RecyclerView引入
     compile rootProject.ext.dependencies.RecyclerView
+    // Android M的权限认证
+    compile rootProject.ext.dependencies.EasyPermissions
 }

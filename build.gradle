@@ -47,7 +47,9 @@ ext {
             // 添加OrmLite依赖
             OrmLite : 'com.j256.ormlite:ormlite-android:5.0',
             // RecyclerView引入
-            RecyclerView : 'com.android.support:recyclerview-v7:24.2.1'
+            RecyclerView : 'com.android.support:recyclerview-v7:24.2.1',
+            //Android M的权限认证
+            EasyPermissions : 'pub.devrel:easypermissions:0.3.0'
     ]
 
 }
