@@ -2,9 +2,9 @@ package com.it520.takeout.ui.activity;
 
 import android.Manifest;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTabHost;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -12,12 +12,15 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.it520.takeout.BuildConfig;
 import com.it520.takeout.R;
 import com.it520.takeout.ui.fragment.HomeFragment;
 import com.it520.takeout.ui.fragment.MeFragment;
 import com.it520.takeout.ui.fragment.MoreFragment;
 import com.it520.takeout.ui.fragment.OrderFragment;
+import com.it520.takeout.utils.LogUtils;
 import com.it520.takeout.utils.UIUtils;
+import com.tencent.mars.xlog.Xlog;
 
 import java.util.List;
 
@@ -26,7 +29,7 @@ import butterknife.InjectView;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends BaseActivity implements EasyPermissions.PermissionCallbacks{
+public class MainActivity extends BaseActivity implements EasyPermissions.PermissionCallbacks {
 
 
     @InjectView(R.id.main_fragment_container)
@@ -43,11 +46,31 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         initTabHost();
     }
 
+    /**
+     * 初始化XLog
+     */
+    private void initXLog() {
+        final String SDCARD = Environment.getExternalStorageDirectory().getAbsolutePath();
+        final String logPath = SDCARD + "/takeOut/log";
+        //init xLog
+        if (BuildConfig.DEBUG) {
+            Xlog.open(false, Xlog.LEVEL_DEBUG, Xlog.AppednerModeAsync, "", logPath, "TakeOut");
+            Xlog.setConsoleLogOpen(true);
+        } else {
+            Xlog.open(false, Xlog.LEVEL_INFO, Xlog.AppednerModeAsync, "", logPath, "TakeOut");
+            Xlog.setConsoleLogOpen(false);
+        }
+        com.tencent.mars.xlog.Log.setLogImp(new Xlog());
+        LogUtils.d(getClass().getSimpleName() + "xmg", "初始化XLog完毕");
+    }
+
+
     private void requestPermission() {
 //        permission:android.permission.WRITE_EXTERNAL_STORAGE
         String[] perms = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
         if (EasyPermissions.hasPermissions(this, perms)) {//检查是否获取该权限
-            Log.e(getClass().getSimpleName() + "xmg", "requestPermission: " + "已获取权限");
+            initXLog();
+            LogUtils.d(getClass().getSimpleName() + "xmg", "requestPermission: " + "已获取权限");
         } else {
             //第二个参数是被拒绝后再次申请该权限的解释
             //第三个参数是请求码
@@ -58,10 +81,10 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
 
     private void initTabHost() {
         String[] tabTexts = getResources().getStringArray(R.array.main_tabs);
-        int[] resIds = new int[]{R.drawable.home,R.drawable.order,R.drawable.me,R.drawable.more};
+        int[] resIds = new int[]{R.drawable.home, R.drawable.order, R.drawable.me, R.drawable.more};
         Class<?>[] fragmentClasses = new Class[]{HomeFragment.class, OrderFragment.class, MeFragment.class, MoreFragment.class};
         //1 初始化 它能够替换Fragment,也是使用了FragmentManager ,需要把FragmentManager传给它
-        mMainFragmentTabHost.setup(getApplicationContext(),getSupportFragmentManager(),R.id.main_fragment_container);
+        mMainFragmentTabHost.setup(getApplicationContext(), getSupportFragmentManager(), R.id.main_fragment_container);
         //2 准备创建出来一个tab 不能直接用该类的方法来创建
         for (int i = 0; i < tabTexts.length; i++) {
             TabHost.TabSpec tabSpec = mMainFragmentTabHost.newTabSpec(tabTexts[i]);
@@ -72,8 +95,15 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
             tv_item_tab.setText(tabTexts[i]);
             tabSpec.setIndicator(inflate);
             //3 添加一个个tab进来
-            mMainFragmentTabHost.addTab(tabSpec,fragmentClasses[i],null);
+            mMainFragmentTabHost.addTab(tabSpec, fragmentClasses[i], null);
         }
+
+        mMainFragmentTabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tabId) {
+                LogUtils.d(tabId);
+            }
+        });
     }
 
     @Override
@@ -83,14 +113,15 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
             // Do something after user returned from app settings screen, like showing a Toast.
             UIUtils.showToastSafe("请去设置中找到当前应用并提供权限");
         }
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults,this);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
 
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {
-        Log.e(getClass().getSimpleName() + "xmg", "onPermissionsGranted: " + "");
         //权限通过后，将会开始进行一些联网等操作
+        //初始化Log
+        initXLog();
 
     }
 

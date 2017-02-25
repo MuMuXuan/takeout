@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
 
+import com.tencent.mars.xlog.Log;
+
 
 /* 
  * ============================================================
@@ -35,6 +37,8 @@ public class MyApplication extends Application {
         sHandler = new Handler(getMainLooper());
     }
 
+
+
     public static Handler getMainThreadHandler() {
         return sHandler;
     }
@@ -42,5 +46,11 @@ public class MyApplication extends Application {
 
     public static int getMainThreadId() {
         return sMainThreadId;
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        Log.appenderClose();
     }
 }
